@@ -1,0 +1,10 @@
+# built boards (regenerate with: node build.js <seed>.json > board.html)
+/*-board.html
+nabshift-board.html
+
+# editor / OS cruft
+.DS_Store
+*.swp
+
+# node (the kit itself has no deps; this is just in case you add tooling later)
+node_modules/

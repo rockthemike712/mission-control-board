@@ -1,0 +1,199 @@
+# Mission Control — a dependency-aware task board
+
+A single-file, zero-dependency task board you drop into any project. Two owners (e.g. **you**
+vs **your coding agent**), each with one consolidated plate, plus a **map view** that draws the
+whole project as a transit map — one line per track, converging on a **terminus** (GO LIVE),
+each line's current bottleneck pulsing.
+
+**"Ready" is never stored — it's derived.** Every task lists its `deps`; a task is blocked
+until all of them are done. Complete one and anything it unblocks animates into **Up now**.
+
+No build. No framework. No npm install. It's one HTML file that runs from `file://`.
+
+```bash
+open board.html          # macOS
+# or
+xdg-open board.html      # Linux
+# or serve it
+npx serve .
+```
+
+Out of the box `board.html` shows a small demo project so you can click around. Then you make
+it yours by editing one thing: the **seed**.
+
+---
+
+## Make it yours
+
+Everything project-specific lives in a single JSON block near the bottom of `board.html`:
+
+```html
+<script id="seed" type="application/json">
+{ "config": {...}, "rev": 1, "tracks": [...], "tasks": [...] }
+</script>
+```
+
+Edit that block, save, refresh. The engine above it (the `<style>`, the map module, and the
+main `<script>`) is generic and never needs touching.
+
+Two ways to work:
+
+1. **No build** — copy `board.html` into your project, edit the inline seed by hand. Done.
+2. **Optional builder** — keep your seed in its own file and inject it:
+   ```bash
+   node build.js my-project.seed.json > board.html
+   ```
+   Zero dependencies; purely a convenience for keeping one engine + many seeds.
+
+---
+
+## The seed schema
+
+```jsonc
+{
+  "config": {
+    "boardId": "my-project",                 // namespaces this board's localStorage + sync payload
+    "title": "My Project — Mission Control",  // browser tab title
+    "wordmark": "MY PROJECT",                 // header wordmark (plain text)…
+    "wordmarkHTML": "MY<span class=\"accent\">PROJECT</span>", // …or opt into an accent span
+    "eyebrow": "Mission Control",             // small line under the wordmark
+    "mapLabel": "MAP",                        // third tab label (optional)
+    "terminusMessage": "🎉 SHIPPED 🎉",        // toast when the terminus task completes
+
+    "lanes": [                                // exactly two — the two owners
+      { "id": "me",    "label": "ME",    "name": "Me",    "subtitle": "your whole plate",
+        "glyph": "M", "color": "#FFB020", "world": true },
+      { "id": "agent", "label": "AGENT", "name": "Agent", "subtitle": "the agent's plate",
+        "glyph": "A", "color": "#45E0FF" }
+    ],
+    "ext": { "label": "WORLD", "glyph": "⧗", "color": "#8B95AC" }
+  },
+
+  "rev": 1,               // bump when you commit a new seed; old device deltas merge under it
+  "updated": "2026-07-24",
+
+  "tracks": [             // the "lines" on the map; each task belongs to one
+    { "id": "build", "name": "Build", "color": "#F472B6" }
+  ],
+
+  "tasks": [
+    {
+      "id": "b-core",              // stable, unique; other tasks reference it in `deps`
+      "title": "Build the core feature",
+      "short": "Core",             // one-word keyword shown on the zoomed-out map
+      "owner": "me",               // a lane id, or "ext" for the outside world
+      "status": "open",            // "open" | "done"
+      "track": "build",
+      "deps": ["b-scaffold"],      // blocked until all of these are done
+      "priority": "high",          // "high" | "medium" | "low"
+      "doing": true,               // optional — shows an "in flight" marker
+      "terminus": true,            // optional — at most one task; forced to the bottom, drawn as GO LIVE
+      "detail": "One line of context.",
+      "ref": { "label": "spec", "href": "https://…" }  // optional link chip
+    }
+  ]
+}
+```
+
+Rules the board relies on (all checked by the test):
+
+- **Two lanes.** `config.lanes` has exactly two entries — the two owners. Labels, colors, and
+  glyphs are yours.
+- **`owner: "ext"`** is the reserved id for the outside world (a number arriving, a vetting
+  queue clearing). Ext tasks surface on whichever lane is marked `"world": true` (default: the
+  first lane), pulsing until you tap ✓ when the world delivers.
+- **One terminus, at most.** Flag the final task `"terminus": true`; the map forces it to the
+  bottom and draws every line converging on it.
+- Every `dep` must resolve to a real task id, and the graph must be acyclic.
+
+---
+
+## The three views
+
+| Tab | What it shows |
+| --- | --- |
+| **Lane A / Lane B** | Each owner's full plate in one list: **Up now** (unblocked — tap the ring to complete), **Waiting** (blocked, names its blocker), **Done** (collapsed). Ext/world items sit on the world-lane with a pulsing ⧗. |
+| **Map** | The dependency graph as a transit map. **◈ Network**: the metro map, fitted to screen, tap a station to zoom in. **≣ Lines**: one card per track, stations as rows with ⛓ jump-chips to blockers. |
+
+## The sync loop
+
+Taps persist **per device** in `localStorage` as *deltas* over the committed seed — so pulling
+a newer seed merges cleanly under your local changes, and a delta the seed catches up to
+self-cleans. The **Sync** button (lights up when you have local changes) exports a compact
+payload:
+
+```json
+{ "kind": "my-project-board-sync", "rev": 1, "at": "…",
+  "done": ["task-ids…"], "reopened": [], "added": [tasks…], "removed": [] }
+```
+
+Apply it to the seed to make it permanent — hand it to your coding agent to commit, or edit the
+seed by hand. **Discard local changes** (in the Sync sheet) resets the device to the committed
+board.
+
+---
+
+## Tests
+
+```bash
+node tests/smoke.js
+```
+
+Zero dependencies. Validates every seed (the demo in `board.html` + everything in `examples/`):
+two lanes, valid owners/tracks/statuses, unique ids, deps resolve, the graph is acyclic, at
+most one terminus — and reproduces the engine's readiness derivation to prove a blocked task
+unblocks when its deps complete. Also asserts the engine carries no project-specific coupling.
+
+For UI changes, also smoke it in a real browser: open `board.html`, tap a ring in **Up now**
+and confirm the 🔓 unblock toast, switch to **Map** and confirm stations render and tap to
+toggle, and check both light and dark (the ◐ button).
+
+---
+
+## `examples/`
+
+- **`nabshift.seed.json`** — a real launch board (six tracks, ~49 tasks, cross-track deps, a
+  `world` lane, a terminus), kept as a worked example of a filled-in graph. Scrubbed of the
+  originating project's private details. View it:
+  ```bash
+  node build.js examples/nabshift.seed.json > nabshift-board.html && open nabshift-board.html
+  ```
+
+---
+
+## Splitting this into its own repo
+
+This folder is self-contained — nothing outside it is required. To make it a standalone repo
+you reuse across projects:
+
+```bash
+# from a copy of this board-kit/ folder
+git init
+git add board.html build.js README.md examples/ tests/
+git commit -m "Mission Control task board"
+# create an empty repo on your host, then:
+git remote add origin git@github.com:<you>/mission-control-board.git
+git push -u origin main
+```
+
+Add a CI check (optional) so a bad seed can't merge — GitHub Actions:
+
+```yaml
+# .github/workflows/ci.yml
+name: ci
+on: [push, pull_request]
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node tests/smoke.js
+```
+
+Then **per project**, either copy `board.html` and edit its seed, or keep a `*.seed.json` per
+project and `node build.js project.seed.json > board.html`. Each board's device state is keyed
+by `config.boardId`, so several boards coexist on one machine without colliding.
+
+Pick a license before you push (MIT is a common choice for a reusable tool).

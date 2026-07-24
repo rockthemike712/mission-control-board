@@ -1,0 +1,81 @@
+{
+  "config": {
+    "boardId": "nabshift",
+    "title": "NabShift — Mission Control",
+    "wordmarkHTML": "NAB<span class=\"accent\">SHIFT</span>",
+    "eyebrow": "Mission Control",
+    "lanes": [
+      { "id": "mike",   "label": "MIKE",   "name": "Mike",   "subtitle": "your whole plate, one list", "glyph": "M", "color": "#FFB020", "world": true },
+      { "id": "claude", "label": "CLAUDE", "name": "Claude", "subtitle": "the agent's plate",          "glyph": "C", "color": "#45E0FF" }
+    ],
+    "ext": { "label": "WORLD", "glyph": "⧗", "color": "#8B95AC" },
+    "terminusMessage": "🎉🎉 PILOT LIVE 🎉🎉"
+  },
+  "rev": 1,
+  "updated": "2026-07-24",
+  "_note": "A scrubbed copy of a real launch board, kept as a worked example of the seed shape. Client name, personal names, private pricing, admin identity and internal domains were removed. To view it: paste this seed into board.html's <script id=\"seed\"> block (or run: node build.js examples/nabshift.seed.json > nabshift.html).",
+  "tracks": [
+    { "id": "smsline",   "name": "SMS Go-Live",   "color": "#45E0FF" },
+    { "id": "dbline",    "name": "Production DB",  "color": "#3ECF8E" },
+    { "id": "storeline", "name": "App Store",      "color": "#A78BFA" },
+    { "id": "clientline","name": "Client Deal",    "color": "#FFB020" },
+    { "id": "buildline", "name": "Feature Build",  "color": "#F472B6" },
+    { "id": "outline",   "name": "Growth",         "color": "#FF6B6B" }
+  ],
+  "tasks": [
+    { "id": "entity", "title": "Legal entity + EIN for the SMS sender", "short": "Entity", "owner": "mike", "status": "done", "track": "smsline", "deps": [], "priority": "high", "detail": "The registered business that owns the SMS sender identity." },
+    { "id": "site-sms-pages", "title": "Site privacy + SMS-terms pages", "short": "SMS site", "owner": "claude", "status": "done", "track": "smsline", "deps": [], "priority": "medium", "detail": "The marketing site carries the SMS program language the A2P registration points at." },
+    { "id": "a2p-submit", "title": "Submit the A2P 10DLC campaign", "short": "A2P sent", "owner": "mike", "status": "done", "track": "smsline", "deps": ["entity", "site-sms-pages"], "priority": "high", "detail": "Brand + campaign registered with the SMS provider. Carrier vetting follows." },
+    { "id": "a2p-vetting", "title": "Carrier vetting clears", "short": "Vetting", "owner": "ext", "status": "open", "track": "smsline", "deps": ["a2p-submit"], "priority": "high", "detail": "Brand ~1 business day, campaign ~3–5 business days. Out of your hands — tap ✓ when the provider says approved." },
+    { "id": "phone-provider", "title": "Enable the phone auth provider", "short": "SMS auth", "owner": "mike", "status": "open", "track": "smsline", "deps": ["a2p-vetting"], "priority": "high", "detail": "The switch that flips real sign-in + outbound SMS from inert to live." },
+    { "id": "sms-sender", "title": "Outbound SMS sender function", "short": "Sender", "owner": "claude", "status": "open", "track": "smsline", "deps": ["phone-provider"], "priority": "high", "detail": "Real sender + message templates; retire the simulator for the pilot crew." },
+    { "id": "real-signin", "title": "Verify real phone-OTP sign-in E2E", "short": "OTP login", "owner": "claude", "status": "open", "track": "smsline", "deps": ["phone-provider"], "priority": "medium", "detail": "First real login exercising the staged auth path end-to-end." },
+
+    { "id": "staging-port", "title": "Staging port + verification", "short": "Staging", "owner": "claude", "status": "done", "track": "dbline", "deps": [], "priority": "high", "detail": "Schema, access rules, write-path RPCs, snapshots, day claims — verified on staging." },
+    { "id": "account-switcher", "title": "Cross-account admin switcher", "short": "Switcher", "owner": "claude", "status": "done", "track": "dbline", "deps": [], "priority": "low", "detail": "Membership-verified switching, read-only cross-account view. Staging-verified." },
+    { "id": "prod-decision", "title": "Decide: shared vs dedicated prod project", "short": "Prod pick", "owner": "mike", "status": "done", "track": "dbline", "deps": ["staging-port"], "priority": "medium", "detail": "Decided: dedicated production project, shared across future clients." },
+    { "id": "prod-bootstrap", "title": "Client production bootstrap", "short": "Bootstrap", "owner": "claude", "status": "open", "track": "dbline", "deps": ["prod-decision"], "priority": "high", "detail": "Apply the bootstrap SQL to the chosen prod project." },
+    { "id": "pro-upgrade", "title": "Upgrade the DB plan", "short": "DB plan", "owner": "mike", "status": "open", "track": "dbline", "deps": [], "priority": "medium", "detail": "Free tier auto-pauses after idle — must be on the paid plan before the pilot." },
+    { "id": "mint-admin-identity", "title": "Mint the client admin identity", "short": "Admin ID", "owner": "mike", "status": "open", "track": "dbline", "deps": ["phone-provider", "prod-bootstrap"], "priority": "high", "detail": "Sign in once with the admin number and insert the admin row." },
+    { "id": "deploy-login-config", "title": "Deploy the login config to the app domain", "short": "Login cfg", "owner": "mike", "status": "open", "track": "dbline", "deps": ["mint-admin-identity"], "priority": "high", "detail": "Ship the login-gated deploy; the public demo stays the sales demo." },
+    { "id": "sql-verify", "title": "Run the full SQL verify suites", "short": "SQL runs", "owner": "claude", "status": "open", "track": "dbline", "deps": ["staging-port"], "priority": "medium", "detail": "Day-claims, read-path, write-path, and instrumentation suites in the SQL editor." },
+    { "id": "realtime-days", "title": "Publish day claims to Realtime", "short": "Realtime", "owner": "claude", "status": "open", "track": "dbline", "deps": ["staging-port"], "priority": "low", "detail": "Add to the publication when the live board subscribes to day capacity." },
+
+    { "id": "pwa", "title": "PWA hardening + icon rebuild", "short": "PWA", "owner": "claude", "status": "done", "track": "storeline", "deps": [], "priority": "medium", "detail": "Manifest 192/512/maskable + iOS meta; full-bleed icon family." },
+    { "id": "device-pass", "title": "Icon + install check on a real phone", "short": "Device", "owner": "mike", "status": "open", "track": "storeline", "deps": ["pwa"], "priority": "medium", "detail": "Add to Home Screen on iPhone + Android; eyeball the icon. Verified headless only so far." },
+    { "id": "duns-wait", "title": "DUNS number arrives", "short": "DUNS", "owner": "ext", "status": "open", "track": "storeline", "deps": [], "priority": "medium", "detail": "Applied — typically 1–2 weeks. Tap ✓ the day the number lands." },
+    { "id": "apple-account", "title": "Apple developer account", "short": "Apple", "owner": "mike", "status": "open", "track": "storeline", "deps": ["duns-wait"], "priority": "medium", "detail": "Annual fee; needs the DUNS number." },
+    { "id": "play-account", "title": "Google Play developer account", "short": "Play acct", "owner": "mike", "status": "open", "track": "storeline", "deps": [], "priority": "medium", "detail": "One-time fee; needs only the verified legal entity — no DUNS, unlike Apple." },
+    { "id": "capacitor", "title": "Native wrapper + push", "short": "Wrapper", "owner": "claude", "status": "open", "track": "storeline", "deps": ["pwa"], "priority": "low", "detail": "A separate project from the web app. Later sprint." },
+    { "id": "store-submit", "title": "Store submissions", "short": "Submit", "owner": "claude", "status": "open", "track": "storeline", "deps": ["capacitor", "apple-account", "play-account"], "priority": "low", "detail": "Reviewers sign in via a test OTP, so not blocked on live SMS. Budget one review bounce." },
+
+    { "id": "pricing-model", "title": "Pricing decided", "short": "Pricing", "owner": "mike", "status": "done", "track": "clientline", "deps": [], "priority": "high", "detail": "One flat all-in monthly." },
+    { "id": "onboarding-kit", "title": "Crew onboarding kit", "short": "Crew kit", "owner": "claude", "status": "done", "track": "clientline", "deps": [], "priority": "medium", "detail": "Worker/admin quickstarts + SMS cheat sheet." },
+    { "id": "pricing-convo", "title": "Pricing conversation with the client", "short": "Price talk", "owner": "mike", "status": "done", "track": "clientline", "deps": ["pricing-model"], "priority": "high", "detail": "Pricing meeting happened and went well." },
+    { "id": "counsel", "title": "Counsel: policy block + agreement review", "short": "Counsel", "owner": "mike", "status": "open", "track": "clientline", "deps": [], "priority": "medium", "detail": "Review the draft pilot agreement and the contractor policy." },
+    { "id": "agreement-signed", "title": "Pilot agreement signed", "short": "Contract", "owner": "mike", "status": "open", "track": "clientline", "deps": ["pricing-convo", "counsel", "vendor-entity"], "priority": "high", "detail": "Fill the bracketed entity/date placeholders and get ink." },
+    { "id": "intake", "title": "Crew + gigs intake sheets", "short": "Intake", "owner": "mike", "status": "open", "track": "clientline", "deps": [], "priority": "medium", "detail": "The client's real roster + gigs; confirm the real office/SMS number." },
+    { "id": "data-load", "title": "First real data load", "short": "Data load", "owner": "claude", "status": "open", "track": "clientline", "deps": ["intake", "prod-bootstrap"], "priority": "medium", "detail": "Intake CSV → load SQL → the client's crew + gigs in the prod DB." },
+    { "id": "vendor-entity", "title": "Vendor entity registered", "short": "Vendor", "owner": "mike", "status": "done", "track": "clientline", "deps": [], "priority": "low", "detail": "Your own legal entity (distinct from the client's) — unblocks the agreement + payment." },
+    { "id": "verification-pass", "title": "Live verification pass", "short": "Verify", "owner": "claude", "status": "open", "track": "clientline", "deps": ["deploy-login-config", "sms-sender"], "priority": "high", "detail": "Full smoke, live OTP login, leak probes, both channels. Nothing is live before this." },
+    { "id": "crew-onboard", "title": "Roll out to the pilot crew", "short": "Rollout", "owner": "mike", "status": "open", "track": "clientline", "deps": ["data-load", "real-signin", "sms-sender", "onboarding-kit", "deploy-login-config", "verification-pass"], "priority": "high", "detail": "Quickstarts in hand, crew installing + claiming for real." },
+    { "id": "pilot-live", "title": "PILOT LIVE", "short": "GO LIVE", "owner": "claude", "status": "open", "track": "clientline", "deps": ["crew-onboard", "agreement-signed"], "priority": "high", "terminus": true, "detail": "Paying client, real crew, real shifts. The terminus. 🎉" },
+
+    { "id": "sprint0-suite", "title": "Sprint-0 demo suite", "short": "Sprint 0", "owner": "claude", "status": "done", "track": "buildline", "deps": [], "priority": "high", "detail": "Pay visibility, assignment, locks + approvals, restricted eligibility, photos, branding — demoed." },
+    { "id": "day-claims", "title": "Single-day claims on recurring posts", "short": "Days", "owner": "claude", "status": "done", "track": "buildline", "deps": [], "priority": "medium", "detail": "Per-date capacity, penalty-free per-day drops; live on demo + staging." },
+    { "id": "gps-checkin", "title": "GPS check-in + photo capture", "short": "GPS", "owner": "claude", "status": "open", "track": "buildline", "deps": ["staging-port"], "priority": "high", "doing": true, "detail": "Spec landed; build in flight." },
+    { "id": "server-checkins", "title": "Server-side check-ins + admin map", "short": "Server", "owner": "claude", "status": "open", "track": "buildline", "deps": ["staging-port"], "priority": "medium", "detail": "Server-timestamped check-ins are live on staging — remaining work is the admin-map render layer." },
+    { "id": "photos-storage", "title": "Photos → object storage", "short": "Storage", "owner": "claude", "status": "open", "track": "buildline", "deps": ["staging-port"], "priority": "medium", "detail": "Off localStorage thumbnails before anyone uploads full-size originals." },
+    { "id": "trades-v2", "title": "Trade approval v2", "short": "Trades v2", "owner": "claude", "status": "open", "track": "buildline", "deps": ["staging-port"], "priority": "low", "detail": "Named, qualified replacement; swap executes only on admin approval." },
+
+    { "id": "out-domains", "title": "Buy + auth sending domains & mailboxes", "short": "Domains", "owner": "mike", "status": "open", "track": "outline", "deps": [], "priority": "medium", "detail": "Sending domains + mailboxes with SPF/DKIM/DMARC and one-click unsubscribe. Warmup starts after." },
+    { "id": "out-warmup", "title": "Domain / mailbox warmup (2–4 wks)", "short": "Warmup", "owner": "ext", "status": "open", "track": "outline", "deps": ["out-domains"], "priority": "medium", "detail": "The long pole of email — runs on its own clock once started." },
+    { "id": "out-stack", "title": "Sequencer + CRM + territory split", "short": "Stack", "owner": "mike", "status": "open", "track": "outline", "deps": [], "priority": "medium", "detail": "Pick a sequencer + CRM, suppression list, monitoring, and a scheduling link; agree the territory split." },
+    { "id": "out-lists", "title": "Build the lead lists", "short": "Lead lists", "owner": "claude", "status": "open", "track": "outline", "deps": [], "priority": "medium", "detail": "Start with the public licensee list for the local beachhead; national list behind it." },
+    { "id": "out-enrich", "title": "Enrich + verify the lists", "short": "Enrich", "owner": "claude", "status": "open", "track": "outline", "deps": ["out-lists"], "priority": "low", "detail": "Contacts, emails, verification passes — before anything sends." },
+    { "id": "out-sequences", "title": "Write + internally test sequences", "short": "Emails", "owner": "claude", "status": "open", "track": "outline", "deps": ["out-stack"], "priority": "low", "detail": "A few sequences, tested against your own inboxes only. No cold sends yet." },
+    { "id": "out-warm-local", "title": "Work the local warm list by hand", "short": "Warm list", "owner": "mike", "status": "open", "track": "outline", "deps": [], "priority": "medium", "detail": "Founder-led, personal, research-heavy — never a blast; the local market is tiny and precious." },
+    { "id": "case-study", "title": "Pilot case study — the proof numbers", "short": "Proof", "owner": "claude", "status": "open", "track": "outline", "deps": ["pilot-live"], "priority": "high", "detail": "A real pilot read with named results. No cold outbound until this exists." },
+    { "id": "out-cold-live", "title": "Cold sends live", "short": "Cold live", "owner": "mike", "status": "open", "track": "outline", "deps": ["out-warmup", "out-enrich", "out-sequences", "case-study"], "priority": "medium", "detail": "The sequencer turns on, armed with real proof numbers. Low volume; scale only as reply quality + deliverability hold." }
+  ]
+}
