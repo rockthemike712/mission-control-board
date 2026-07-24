@@ -216,5 +216,3 @@ jobs:
 Then **per project**, either copy `board.html` and edit its seed, or keep a `*.seed.json` per
 project and `node build.js project.seed.json > board.html`. Each board's device state is keyed
 by `config.boardId`, so several boards coexist on one machine without colliding.
-
-Pick a license before you push (MIT is a common choice for a reusable tool).
