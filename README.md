@@ -21,7 +21,7 @@ open board.html   # then edit the <script id="seed"> block to make it yours
 **Tap any station and the map answers back** — completing a task ripples through its
 dependents, and the 🔓 toast names exactly what just unblocked:
 
-![The dependency map — tap a station to complete it and watch what unblocks](screenshots/map-demo.gif)
+![The dependency map — tap a station and it completes](screenshots/map-demo-v2.gif)
 
 The whole project on one screen — one line per track, cross-track dependencies as connectors,
 everything converging on the **GO LIVE** terminus:
