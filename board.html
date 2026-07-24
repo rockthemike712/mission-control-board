@@ -73,7 +73,7 @@
     padding: calc(10px + env(safe-area-inset-top)) 16px 0;
     border-bottom: 1px solid var(--line);
   }
-  .hd-row { display: flex; align-items: center; gap: 10px; max-width: 760px; margin: 0 auto; }
+  .hd-row { display: flex; align-items: center; gap: 10px; max-width: 1120px; margin: 0 auto; }
   .wordmark { font-weight: 800; font-size: 16px; letter-spacing: .12em; }
   .wordmark .accent { color: var(--halo); }
   .eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .14em; color: var(--ink-faint); text-transform: uppercase; margin-top: 1px; }
@@ -85,13 +85,15 @@
   .hd-btn:active { transform: scale(.96); }
   .hd-btn.sync-live { color: var(--bg); background: var(--halo); border-color: var(--halo); box-shadow: 0 0 14px color-mix(in srgb, var(--halo) 45%, transparent); }
   /* per-line progress */
-  .progress { display: flex; gap: 4px; max-width: 760px; margin: 10px auto 0; padding-bottom: 10px; }
+  .progress { display: flex; gap: 4px; max-width: 1120px; margin: 10px auto 0; padding-bottom: 10px; }
   .progress .seg { flex: 1; height: 4px; border-radius: 2px; background: var(--bg-sunk); overflow: hidden; }
   .progress .seg i { display: block; height: 100%; border-radius: 2px; background: var(--c); width: 0%; transition: width .6s cubic-bezier(.22,1,.36,1); }
 
   /* ---------- views ---------- */
-  main { max-width: 760px; margin: 0 auto; padding: 14px 14px 20px; }
+  main { max-width: 1120px; margin: 0 auto; padding: 14px 14px 20px; }
   .view { display: none; }
+  /* the map uses the full width; the owner task lists stay a comfortable reading width */
+  .lane-view { max-width: 760px; margin-left: auto; margin-right: auto; }
   /* entrance animates transform only — never opacity (a frozen animation clock must not blank the view) */
   .view.on { display: block; animation: viewin .22s ease; }
   @keyframes viewin { from { transform: translateY(6px); } to { transform: none; } }
@@ -227,7 +229,7 @@
   /* ---------- tab bar — lives in the header; the host app's floating buttons own the bottom of the screen ---------- */
   nav.tabs {
     display: flex; justify-content: center; gap: 6px;
-    max-width: 760px; margin: 4px auto 0; padding-bottom: 10px;
+    max-width: 1120px; margin: 4px auto 0; padding-bottom: 10px;
   }
   .tab {
     flex: 1; max-width: 180px; display: flex; flex-direction: column; align-items: center; gap: 3px;
@@ -821,7 +823,7 @@
     var mainEl = document.querySelector("main"), mapEl = document.getElementById("view-map");
     LANES.forEach(function (l) {
       var s = document.createElement("section");
-      s.className = "view"; s.id = "view-" + l.id;
+      s.className = "view lane-view"; s.id = "view-" + l.id;
       s.setAttribute("aria-label", (l.name || l.label || l.id) + " tasks");
       mainEl.insertBefore(s, mapEl);
     });
@@ -1082,13 +1084,16 @@
     var svg = host.querySelector("svg"); if (!svg) return;
     var w = parseFloat(svg.getAttribute("width")) || 0;
     var h = parseFloat(svg.getAttribute("height")) || 0;
+    // Reset first, THEN measure — so availW is the host's real content width, not a value
+    // polluted by a prior transform. (netHost lives inside the content column, which is
+    // narrower than the viewport on desktop; sizing to the viewport overflowed + mis-centered.)
+    svg.style.transform = ""; svg.style.marginLeft = "";
+    host.style.height = ""; host.style.overflow = ""; host.style.overflowX = ""; host.classList.remove("fitted");
     if (netMode === "fit" && w && h) {
-      // Fit the WHOLE graph on screen — both axes. Measure the room from the VIEWPORT, not
-      // from netHost (its width is polluted by the overflowing svg, which made scale read ~1).
-      var vw = document.documentElement.clientWidth || window.innerWidth;
+      // Fit the WHOLE graph on screen — both axes — within the map's actual box.
+      var availW = host.clientWidth || (document.documentElement.clientWidth - 8);
       var vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
       var top = host.getBoundingClientRect().top; if (top < 0) top = 0;
-      var availW = vw - 8;
       var availH = Math.max(300, vh - top - 14);   // leftover screen height below the controls
       var sc = Math.min(availW / w, availH / h, 1); // never upscale past 1:1
       svg.style.transformOrigin = "0 0";
@@ -1098,12 +1103,7 @@
       host.style.overflow = "hidden";
       host.classList.add("fitted");
     } else {
-      svg.style.transform = "";
-      svg.style.marginLeft = "";
-      host.style.height = "";
-      host.style.overflow = "";
       host.style.overflowX = "auto";
-      host.classList.remove("fitted");
     }
     var zb = document.getElementById("netZoomBtn");
     if (zb) zb.textContent = netMode === "fit" ? "🔍 Zoom in" : "⤢ Fit all";
