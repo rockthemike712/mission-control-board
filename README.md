@@ -10,6 +10,27 @@ until all of them are done. Complete one and anything it unblocks animates into 
 
 No build. No framework. No npm install. It's one HTML file that runs from `file://`.
 
+## What it looks like
+
+The whole project on one screen — one line per track, cross-track dependencies as connectors,
+everything converging on the **GO LIVE** terminus:
+
+![Network map view](screenshots/map-network.png)
+
+<table>
+<tr>
+<td width="50%"><img src="screenshots/mike-plate.png" alt="An owner's plate"><br><em>Each owner's plate: <strong>Up now</strong> (tap the ring to complete), then Waiting and Done.</em></td>
+<td width="50%"><img src="screenshots/lines.png" alt="Lines view"><br><em>The <strong>Lines</strong> view — each track as a subway diagram; ⛓ chips jump to the blocker.</em></td>
+</tr>
+</table>
+
+Light theme is built in (tap ◐):
+
+![Network map in light theme](screenshots/map-network-light.png)
+
+> The screenshots use the included [`examples/nabshift.seed.json`](examples/nabshift.seed.json)
+> — a scrubbed, real-world board. Your own board is whatever you put in the seed.
+
 ```bash
 open board.html          # macOS
 # or
