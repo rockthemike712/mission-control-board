@@ -18,8 +18,13 @@ open board.html   # then edit the <script id="seed"> block to make it yours
 
 ## What it looks like
 
-The whole project on one screen — one line per track, cross-track dependencies as connectors,
-everything converging on the **GO LIVE** terminus:
+**Tap a ring to complete a task — anything it unblocks animates into "Up now."** The board
+answers *"what does finishing this free up?"* by itself:
+
+![Tapping a task completes it and unblocks the next one](screenshots/board-demo.gif)
+
+And the whole project on one screen — one line per track, cross-track dependencies as
+connectors, everything converging on the **GO LIVE** terminus:
 
 ![Network map view](screenshots/map-network.png)
 
