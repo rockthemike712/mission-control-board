@@ -200,6 +200,24 @@ unchanged engine. Copy whichever is closest to your project and edit from there.
 
 ---
 
+## What people are saying
+
+> "I think you may have come up with a pretty ingenious way of looking at how we develop with
+> AI from now on. I think this is really useful. I'm going to play around with it this weekend.
+> Well done!"
+> — **mwilsonsc**
+
+> "This is so awesome! This seems like what I wanted and what I was trying to come up with in my
+> head so I could ask Claude to build it, but I didn't actually know (if that makes sense lol —
+> like what I envisioned that I would envision, but couldn't). Great job! I'm going to take a
+> deeper look into it when I have the time."
+> — **da_martian**
+
+> "I made a kanban style mission control but this looks really slick. I'd check it out for sure."
+> — **angelarose210**
+
+---
+
 ## Splitting this into its own repo
 
 This folder is self-contained — nothing outside it is required. To make it a standalone repo
