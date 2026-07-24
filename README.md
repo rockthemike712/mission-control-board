@@ -10,6 +10,12 @@ until all of them are done. Complete one and anything it unblocks animates into 
 
 No build. No framework. No npm install. It's one HTML file that runs from `file://`.
 
+**Grab it and go:**
+```bash
+curl -O https://raw.githubusercontent.com/rockthemike712/mission-control-board/main/board.html
+open board.html   # then edit the <script id="seed"> block to make it yours
+```
+
 ## What it looks like
 
 The whole project on one screen — one line per track, cross-track dependencies as connectors,
@@ -179,6 +185,13 @@ toggle, and check both light and dark (the ◐ button).
   ```bash
   node build.js examples/nabshift.seed.json > nabshift-board.html && open nabshift-board.html
   ```
+- **`content-pipeline.seed.json`** — an editorial board (Writer / Editor lanes, Research → Draft
+  → Edit → Publish), showing the same engine on a non-software workflow.
+- **`job-search.seed.json`** — a personal board (Me / Mentor lanes, ending at OFFER SIGNED) —
+  proof the two "owners" can be you and anyone helping you, not just you-and-an-agent.
+
+Each is a different shape — different lane labels, tracks, and terminus — all from the same
+unchanged engine. Copy whichever is closest to your project and edit from there.
 
 ---
 

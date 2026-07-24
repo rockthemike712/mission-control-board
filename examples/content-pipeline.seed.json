@@ -1,0 +1,34 @@
+{
+  "config": {
+    "boardId": "content-pipeline",
+    "title": "Content Pipeline — Mission Control",
+    "wordmarkHTML": "CONTENT<span class=\"accent\">PIPELINE</span>",
+    "eyebrow": "editorial board",
+    "lanes": [
+      { "id": "writer", "label": "WRITER", "name": "Writer", "subtitle": "your desk, one list", "glyph": "W", "color": "#45E0FF", "world": true },
+      { "id": "editor", "label": "EDITOR", "name": "Editor", "subtitle": "the editor's desk", "glyph": "E", "color": "#F472B6" }
+    ],
+    "ext": { "label": "WORLD", "glyph": "⧗", "color": "#8B95AC" },
+    "terminusMessage": "🎉 PUBLISHED 🎉"
+  },
+  "rev": 1,
+  "updated": "2026-07-24",
+  "tracks": [
+    { "id": "research", "name": "Research", "color": "#45E0FF" },
+    { "id": "draft",    "name": "Draft",    "color": "#FFB020" },
+    { "id": "edit",     "name": "Edit",     "color": "#A78BFA" },
+    { "id": "publish",  "name": "Publish",  "color": "#3ECF8E" }
+  ],
+  "tasks": [
+    { "id": "brief", "title": "Pin the angle + audience", "short": "Brief", "owner": "writer", "status": "done", "track": "research", "deps": [], "priority": "high", "detail": "One sentence: who it's for and why now." },
+    { "id": "interview", "title": "Reach out to 2 sources", "short": "Outreach", "owner": "writer", "status": "open", "track": "research", "deps": ["brief"], "priority": "medium" },
+    { "id": "src-reply", "title": "A source gets back to you", "short": "Reply", "owner": "ext", "status": "open", "track": "research", "deps": ["interview"], "priority": "medium", "detail": "Out of your hands — tap ✓ when they reply." },
+    { "id": "outline", "title": "Outline the piece", "short": "Outline", "owner": "writer", "status": "open", "track": "draft", "deps": ["brief"], "priority": "medium" },
+    { "id": "draft", "title": "Write the first draft", "short": "Draft", "owner": "writer", "status": "open", "track": "draft", "deps": ["outline", "src-reply"], "priority": "high", "doing": true },
+    { "id": "line-edit", "title": "Line edit", "short": "Line", "owner": "editor", "status": "open", "track": "edit", "deps": ["draft"], "priority": "medium" },
+    { "id": "fact-check", "title": "Fact-check every claim", "short": "Facts", "owner": "editor", "status": "open", "track": "edit", "deps": ["draft"], "priority": "high" },
+    { "id": "art", "title": "Source the images", "short": "Art", "owner": "writer", "status": "open", "track": "publish", "deps": ["draft"], "priority": "low" },
+    { "id": "cms", "title": "Load into the CMS + schedule", "short": "CMS", "owner": "editor", "status": "open", "track": "publish", "deps": ["line-edit", "fact-check", "art"], "priority": "medium" },
+    { "id": "published", "title": "PUBLISHED", "short": "LIVE", "owner": "editor", "status": "open", "track": "publish", "deps": ["cms"], "priority": "high", "terminus": true, "detail": "Live on the site. 🎉" }
+  ]
+}

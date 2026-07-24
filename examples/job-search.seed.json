@@ -1,0 +1,35 @@
+{
+  "config": {
+    "boardId": "job-search",
+    "title": "Job Search — Mission Control",
+    "wordmarkHTML": "JOB<span class=\"accent\">SEARCH</span>",
+    "eyebrow": "the hunt",
+    "lanes": [
+      { "id": "me",     "label": "ME",     "name": "Me",     "subtitle": "your whole plate, one list", "glyph": "M", "color": "#FFB020", "world": true },
+      { "id": "mentor", "label": "MENTOR", "name": "Mentor", "subtitle": "your mentor's help",         "glyph": "★", "color": "#45E0FF" }
+    ],
+    "ext": { "label": "WORLD", "glyph": "⧗", "color": "#8B95AC" },
+    "terminusMessage": "🎉 OFFER SIGNED 🎉"
+  },
+  "rev": 1,
+  "updated": "2026-07-24",
+  "tracks": [
+    { "id": "prep",      "name": "Prep",       "color": "#FFB020" },
+    { "id": "apply",     "name": "Applications", "color": "#45E0FF" },
+    { "id": "interview", "name": "Interviews",  "color": "#F472B6" },
+    { "id": "close",     "name": "Close",       "color": "#3ECF8E" }
+  ],
+  "tasks": [
+    { "id": "resume", "title": "Polish the résumé", "short": "Résumé", "owner": "me", "status": "done", "track": "prep", "deps": [], "priority": "high" },
+    { "id": "portfolio", "title": "Mentor reviews the portfolio", "short": "Portfolio", "owner": "mentor", "status": "open", "track": "prep", "deps": ["resume"], "priority": "medium" },
+    { "id": "list", "title": "Build the target-company list", "short": "List", "owner": "me", "status": "done", "track": "apply", "deps": [], "priority": "medium" },
+    { "id": "apply5", "title": "Send 5 tailored applications", "short": "Apply", "owner": "me", "status": "open", "track": "apply", "deps": ["resume", "list"], "priority": "high", "doing": true },
+    { "id": "callback", "title": "A recruiter reaches out", "short": "Callback", "owner": "ext", "status": "open", "track": "apply", "deps": ["apply5"], "priority": "medium", "detail": "Out of your hands — tap ✓ when they do." },
+    { "id": "screen", "title": "Phone screen", "short": "Screen", "owner": "me", "status": "open", "track": "interview", "deps": ["callback"], "priority": "high" },
+    { "id": "mock", "title": "Mock interview with mentor", "short": "Mock", "owner": "mentor", "status": "open", "track": "interview", "deps": ["screen"], "priority": "medium" },
+    { "id": "onsite", "title": "Onsite / final round", "short": "Onsite", "owner": "me", "status": "open", "track": "interview", "deps": ["screen", "mock"], "priority": "high" },
+    { "id": "offer", "title": "Offer arrives", "short": "Offer", "owner": "ext", "status": "open", "track": "close", "deps": ["onsite"], "priority": "high", "detail": "The world delivers — tap ✓ when it lands." },
+    { "id": "negotiate", "title": "Negotiate the offer", "short": "Negotiate", "owner": "me", "status": "open", "track": "close", "deps": ["offer"], "priority": "high" },
+    { "id": "signed", "title": "OFFER SIGNED", "short": "SIGNED", "owner": "me", "status": "open", "track": "close", "deps": ["negotiate"], "priority": "high", "terminus": true, "detail": "New job. 🎉" }
+  ]
+}
